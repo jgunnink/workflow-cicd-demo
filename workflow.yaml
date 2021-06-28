@@ -1,0 +1,19 @@
+main:
+  params: [input]
+  steps:
+  - getSha:
+      assign:
+        - sha: ${input.commits[0].id}
+      next: notifyGithub
+  - notifyGithub:
+      call: http.post
+      args:
+        url: https://australia-southeast1-cloud-pipeline-dev.cloudfunctions.net/notify-github
+        body:
+          sha: ${sha}
+          repo: "workflow-cicd-demo"
+          owner: "jgunnink"
+          state: "pending"
+          context: "Workflow CD"
+          description: "Pipeline running..."
+
