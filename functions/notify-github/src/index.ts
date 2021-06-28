@@ -28,9 +28,10 @@ export const notifyGithub = (req: any, res: any) => {
     .post(url, data, config)
     .then(res => {
       console.log(`statusCode: ${res.status}`);
-      console.log(res);
     })
     .catch(error => {
       console.error(error);
     });
+
+  res.send("Notified Github: Pipeline Running");
 };
