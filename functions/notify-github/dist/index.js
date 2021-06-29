@@ -12,7 +12,7 @@ var notifyGithub = function (req, res) {
         state: r.state,
         context: r.context,
         description: r.description,
-        workflowId: r.workflowId
+        target_url: "https://console.cloud.google.com/workflows/workflow/asia-southeast1/workflow-1/execution/" + r.workflowId + "?project=" + process.env.GCP_PROJECT
     });
     var config = {
         headers: {
