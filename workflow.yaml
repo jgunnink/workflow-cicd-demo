@@ -3,7 +3,7 @@ main:
   steps:
   - getSha:
       assign:
-        - sha: ${input.commits[0].id}
+        - sha: ${input.sha}
       next: pendingGithub
   - pendingGithub:
       call: http.post
