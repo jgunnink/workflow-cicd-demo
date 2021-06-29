@@ -11,7 +11,7 @@ export const notifyGithub = (req: any, res: any) => {
     state: r.state,
     context: r.context,
     description: r.description,
-    target_url: r.target_url,
+    target_url: `https://console.cloud.google.com/workflows/workflow/asia-southeast1/workflow-1/execution/${r.workflowId}?project=${process.env.GCP_PROJECT}`,
   });
 
   const config = {

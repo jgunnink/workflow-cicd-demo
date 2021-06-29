@@ -12,7 +12,7 @@ var notifyGithub = function (req, res) {
         state: r.state,
         context: r.context,
         description: r.description,
-        target_url: r.target_url
+        workflowId: r.workflowId
     });
     var config = {
         headers: {

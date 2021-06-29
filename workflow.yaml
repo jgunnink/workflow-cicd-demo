@@ -16,6 +16,7 @@ main:
           state: "pending"
           context: "Workflow CD"
           description: "Pipeline running..."
+          workflowId: ${sys.get_env("GOOGLE_CLOUD_WORKFLOW_EXECUTION_ID")}
       next: succeedGithub
   - succeedGithub:
       call: http.post
@@ -28,4 +29,5 @@ main:
           state: "success"
           context: "Workflow CD"
           description: "Pipeline successful"
+          workflowId: ${sys.get_env("GOOGLE_CLOUD_WORKFLOW_EXECUTION_ID")}
 
