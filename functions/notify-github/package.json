@@ -6,7 +6,7 @@
   "main": "dist/index.js",
   "scripts": {
     "start": "npx tsc-watch --onSuccess 'npx @google-cloud/functions-framework --target=notifyGithub'",
-    "deploy": "npx tsc && gcloud functions deploy notify-github --runtime nodejs14 --trigger-http --region australia-southeast1 --entry-point notifyGithub"
+    "deploy": "npx tsc && gcloud functions deploy notify-github --runtime nodejs14 --trigger-http --region australia-southeast1"
   },
   "author": "JK Gunnink",
   "license": "MIT",

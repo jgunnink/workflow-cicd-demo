@@ -11,7 +11,7 @@ export const notifyGithub = (req: any, res: any) => {
     state: r.state,
     context: r.context,
     description: r.description,
-    // target_url: target_url, Used when providing a link to the output.
+    target_url: r.target_url,
   });
 
   const config = {
