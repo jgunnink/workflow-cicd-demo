@@ -1,12 +1,9 @@
 steps:
 - name: node
   entrypoint: npm
-  args: ['install']
+  args: ['install', '&&', 'npm', 'run', 'build']
   dir: 'functions/notify-github'
-- name: node
-  entrypoint: npm
-  args: ['build']
-  dir: 'functions/notify-github'
+
 - name: "gcr.io/cloud-builders/gcloud"
   entrypoint: "bash"
   args:
