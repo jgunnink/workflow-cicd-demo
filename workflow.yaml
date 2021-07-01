@@ -19,18 +19,12 @@ main:
           workflowId: ${sys.get_env("GOOGLE_CLOUD_WORKFLOW_EXECUTION_ID")}
       next: ensureWorkflowCurrent
   - ensureWorkflowCurrent:
-      call: googleapis.cloudbuild.v1.projects.builds.create
+      call: googleapis.cloudbuild.v1.projects.triggers.run
       args:
         projectId: ${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
+        triggerId: ensureWorkflowCurrent
         body:
-          buildTriggerId: ensureWorkflowCurrent
-          steps:
-            - name: "gcr.io/cloud-builders/gcloud"
-              entrypoint: "bash"
-              args:
-                - "-c"
-                - |
-                  gcloud workflows deploy workflow-1 --location=asia-southeast1 --source=workflow.yaml
+          commitSha: ${sha}
         connector_params:
           timeout: 600 # Seconds
       result: result
