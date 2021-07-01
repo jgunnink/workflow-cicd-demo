@@ -30,6 +30,8 @@ main:
                 - "-c"
                 - |
                   echo "Hello world"
+        connector_params:
+          timeout: 600 # Seconds
       result: result
   - deployInfraResult:
       switch:
