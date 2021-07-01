@@ -1,0 +1,13 @@
+steps:
+- name: node
+  entrypoint: npm
+  args: ['install']
+- name: node
+  entrypoint: npm
+  args: ['build']
+- name: "gcr.io/cloud-builders/gcloud"
+  entrypoint: "bash"
+  args:
+    - "-c"
+    - |
+      gcloud functions deploy notify-github --runtime nodejs14 --trigger-http --region australia-southeast1 --entry-point notifyGithub
