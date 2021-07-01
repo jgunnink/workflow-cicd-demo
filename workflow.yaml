@@ -28,7 +28,22 @@ main:
         connector_params:
           timeout: 600 # Seconds
       result: result
-  - deployInfraResult:
+  - ensureWorkflowCurrentResult:
+      switch:
+        - condition: ${"operation" in result and "error" in result.operation } # Go to failure if unsuccessful
+          next: failGithub
+      next: deployCode
+  - deployCode:
+      call: googleapis.cloudbuild.v1.projects.triggers.run
+      args:
+        projectId: ${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
+        triggerId: deployCode
+        body:
+          commitSha: ${sha}
+        connector_params:
+          timeout: 600 # Seconds
+      result: result
+  - deployCodeResult:
       switch:
         - condition: ${"operation" in result and "error" in result.operation } # Go to failure if unsuccessful
           next: failGithub
