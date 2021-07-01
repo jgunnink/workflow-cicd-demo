@@ -1,12 +1,13 @@
 {
   "name": "notify-github",
   "version": "1.0.0",
-  "description": "A template for Google Cloud Functions project that uses Typescript.",
+  "description": "A typescript function used to notify github of pipeline changes.",
   "repository": "jgunnink/notify-github",
   "main": "dist/index.js",
   "scripts": {
     "start": "npx tsc-watch --onSuccess 'npx @google-cloud/functions-framework --target=notifyGithub'",
-    "deploy": "npx tsc && gcloud functions deploy notify-github --runtime nodejs14 --trigger-http --region australia-southeast1 --entry-point notifyGithub"
+    "deploy": "gcloud functions deploy notify-github --runtime nodejs14 --trigger-http --region australia-southeast1 --entry-point notifyGithub",
+    "build": "npx tsc"
   },
   "author": "JK Gunnink",
   "license": "MIT",
