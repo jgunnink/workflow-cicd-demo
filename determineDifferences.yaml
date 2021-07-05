@@ -4,4 +4,4 @@ steps:
   args:
     - "-c"
     - |
-      git diff --quiet HEAD~1 master $COMPARISON
+      git diff --quiet HEAD~1 master $_COMPARISON
