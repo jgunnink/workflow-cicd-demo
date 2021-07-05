@@ -1,10 +1,10 @@
 steps:
-- name: 'gcr.io/cloud-builders/git'
-  entrypoint: "bash"
-  args:
-    - "-c"
-    - |
-      git checkout master && \
-      git pull && \
-      git checkout $COMMIT_SHA && \
-      git diff --quiet HEAD~1 $COMMIT_SHA $_COMPARISON
+  - name: gcr.io/cloud-builders/git
+    args:
+      - '-c'
+      - |
+        git checkout master && \
+        git pull origin master && \
+        git checkout $COMMIT_SHA && \
+        git diff --quiet HEAD~1 $COMMIT_SHA ${_COMPARISON}
+    entrypoint: bash
