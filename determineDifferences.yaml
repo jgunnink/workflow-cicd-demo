@@ -4,7 +4,7 @@ steps:
       - '-c'
       - |
         git checkout master && \
-        git pull origin master && \
+        git pull origin master --unshallow && \
         git checkout $COMMIT_SHA && \
         git diff --quiet HEAD~1 $COMMIT_SHA ${_COMPARISON}
     entrypoint: bash
