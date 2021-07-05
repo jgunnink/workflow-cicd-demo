@@ -32,7 +32,7 @@ main:
       except:
         as: error
         assign:
-          - pipelineError: exception.operation.error
+          - pipelineError: error
   - ensureWorkflowCurrentResult:
       switch:
         - condition: ${"operation" in result and "error" in result.operation } # Go to failure if unsuccessful
@@ -50,9 +50,9 @@ main:
             timeout: 600 # Seconds
         result: result
       except:
-        as: exception
+        as: error
         assign:
-          - pipelineError: exception.operation.error
+          - pipelineError: error
   - deployCodeResult:
       switch:
         - condition: ${"operation" in result and "error" in result.operation } # Go to failure if unsuccessful
