@@ -27,11 +27,9 @@ main:
           projectId: ${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
           triggerId: determineDifferences
           body:
+            commitSha: ${sha}
             substitutions:
-              commitSha: ${sha}
               _COMPARISON: "workflow.yaml"
-          connector_params:
-            timeout: 600 # Seconds
       except:
         as: error
         steps: # If git diff determines there's a change, it exits with an error (non zero), so we then run these steps
@@ -43,8 +41,6 @@ main:
                 triggerId: ensureWorkflowCurrent
                 body:
                   commitSha: ${sha}
-                connector_params:
-                  timeout: 600 # Seconds
               result: result
             except:
               as: error
@@ -62,11 +58,9 @@ main:
           projectId: ${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
           triggerId: determineDifferences
           body:
+            commitSha: ${sha}
             substitutions:
-              commitSha: ${sha}
               _COMPARISON: "functions/notifyGithub"
-          connector_params:
-            timeout: 600 # Seconds
       except:
         as: error
         steps: # If git diff determines there's a change, it exits with an error (non zero), so we then run these steps
@@ -78,8 +72,6 @@ main:
                   triggerId: deployCode
                   body:
                     commitSha: ${sha}
-                  connector_params:
-                    timeout: 600 # Seconds
                 result: result
               except:
                 as: error
