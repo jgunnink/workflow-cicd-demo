@@ -35,7 +35,7 @@ main:
           - pipelineError: error
   - ensureWorkflowCurrentResult:
       switch:
-        - condition: ${"operation" in result and "error" in result.operation } # Go to failure if unsuccessful
+        - condition: ${pipelineError.message} # Go to failure if unsuccessful
           next: failGithub
       next: deployCode
   - deployCode:
@@ -55,7 +55,7 @@ main:
           - pipelineError: error
   - deployCodeResult:
       switch:
-        - condition: ${"operation" in result and "error" in result.operation } # Go to failure if unsuccessful
+        - condition: ${pipelineError.message} # Go to failure if unsuccessful
           next: failGithub
       next: succeedGithub
   - succeedGithub:
