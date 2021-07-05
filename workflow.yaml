@@ -19,30 +19,40 @@ main:
           workflowId: ${sys.get_env("GOOGLE_CLOUD_WORKFLOW_EXECUTION_ID")}
       next: ensureWorkflowCurrent
   - ensureWorkflowCurrent:
-      call: googleapis.cloudbuild.v1.projects.triggers.run
-      args:
-        projectId: ${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
-        triggerId: ensureWorkflowCurrent
-        body:
-          commitSha: ${sha}
-        connector_params:
-          timeout: 600 # Seconds
-      result: result
+      try:
+        call: googleapis.cloudbuild.v1.projects.triggers.run
+        args:
+          projectId: ${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
+          triggerId: ensureWorkflowCurrent
+          body:
+            commitSha: ${sha}
+          connector_params:
+            timeout: 600 # Seconds
+        result: result
+      except:
+        as: error
+        assign:
+          - pipelineError: exception.operation.error
   - ensureWorkflowCurrentResult:
       switch:
         - condition: ${"operation" in result and "error" in result.operation } # Go to failure if unsuccessful
           next: failGithub
       next: deployCode
   - deployCode:
-      call: googleapis.cloudbuild.v1.projects.triggers.run
-      args:
-        projectId: ${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
-        triggerId: deployCode
-        body:
-          commitSha: ${sha}
-        connector_params:
-          timeout: 600 # Seconds
-      result: result
+      try:
+        call: googleapis.cloudbuild.v1.projects.triggers.run
+        args:
+          projectId: ${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
+          triggerId: deployCode
+          body:
+            commitSha: ${sha}
+          connector_params:
+            timeout: 600 # Seconds
+        result: result
+      except:
+        as: exception
+        assign:
+          - pipelineError: exception.operation.error
   - deployCodeResult:
       switch:
         - condition: ${"operation" in result and "error" in result.operation } # Go to failure if unsuccessful
@@ -71,6 +81,6 @@ main:
           owner: "jgunnink"
           state: "failure"
           context: "Workflow CD"
-          description: "Pipeline failed"
+          description: "Pipeline failed - ${pipelineError}"
           workflowId: ${sys.get_env("GOOGLE_CLOUD_WORKFLOW_EXECUTION_ID")}
       next: end
