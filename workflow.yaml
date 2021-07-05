@@ -35,7 +35,7 @@ main:
           - pipelineError: error
   - ensureWorkflowCurrentResult:
       switch:
-        - condition: ${pipelineError.message} # Go to failure if unsuccessful
+        - condition: ${pipelineError != null} # Go to failure if unsuccessful
           next: failGithub
       next: deployCode
   - deployCode:
@@ -55,7 +55,7 @@ main:
           - pipelineError: error
   - deployCodeResult:
       switch:
-        - condition: ${pipelineError.message} # Go to failure if unsuccessful
+        - condition: ${pipelineError != null} # Go to failure if unsuccessful
           next: failGithub
       next: succeedGithub
   - succeedGithub:
@@ -81,6 +81,6 @@ main:
           owner: "jgunnink"
           state: "failure"
           context: "Workflow CD"
-          description: "Pipeline failed - ${pipelineError}"
+          description: "Pipeline failed - ${pipelineError.operation.error}"
           workflowId: ${sys.get_env("GOOGLE_CLOUD_WORKFLOW_EXECUTION_ID")}
       next: end
