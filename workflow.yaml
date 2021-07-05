@@ -26,7 +26,8 @@ main:
           triggerId: determineDifferences
           body:
             substitutions:
-              _COMPARISON: "workflow.yaml"
+              commitSha: ${sha}
+              "_COMPARISON": "workflow.yaml"
           connector_params:
             timeout: 600 # Seconds
       except:
@@ -60,7 +61,8 @@ main:
           triggerId: determineDifferences
           body:
             substitutions:
-              _COMPARISON: "functions/notifyGithub"
+              commitSha: ${sha}
+              "_COMPARISON": "functions/notifyGithub"
           connector_params:
             timeout: 600 # Seconds
       except:
