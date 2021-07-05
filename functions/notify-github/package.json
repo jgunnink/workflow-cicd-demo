@@ -7,14 +7,21 @@
   "scripts": {
     "start": "npx tsc-watch --onSuccess 'npx @google-cloud/functions-framework --target=notifyGithub'",
     "deploy": "gcloud functions deploy notify-github --runtime nodejs14 --trigger-http --region australia-southeast1 --entry-point notifyGithub",
-    "build": "npx tsc"
+    "build": "npx tsc",
+    "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha -r ts-node/register 'tests/**/*.ts'"
   },
   "author": "JK Gunnink",
   "license": "MIT",
   "devDependencies": {
     "@google-cloud/functions-framework": "^1.9.0",
     "@types/axios": "^0.14.0",
+    "@types/chai": "^4.2.19",
+    "@types/mocha": "^8.2.2",
     "@types/node": "^15.12.5",
+    "axios-mock-adapter": "^1.19.0",
+    "chai": "^4.3.4",
+    "mocha": "^9.0.2",
+    "ts-node": "^10.0.0",
     "tsc-watch": "^4.4.0",
     "typescript": "^4.3.4"
   },

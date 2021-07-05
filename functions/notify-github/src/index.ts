@@ -1,11 +1,27 @@
 import axios from "axios";
 
-export const notifyGithub = (req: any, res: any) => {
+export interface R {
+  body: {
+    sha: string;
+    repo: string;
+    owner: string;
+    description: string;
+    state: "pending" | "success" | "failure";
+    context: string;
+    workflowId: string;
+  };
+}
+
+export const notifyGithub = (req: R, res: any) => {
   const r = req.body;
   const sha = r.sha;
   const repo = r.repo;
   const owner = r.owner || "jgunnink";
   const url = `https://api.github.com/repos/${owner}/${repo}/statuses/${sha}`;
+
+  if (r.state === "failure") {
+    r.description = `Failed - ${r.description}`;
+  }
 
   const data = JSON.stringify({
     state: r.state,
@@ -27,11 +43,12 @@ export const notifyGithub = (req: any, res: any) => {
   axios
     .post(url, data, config)
     .then(res => {
-      console.log(`statusCode: ${res.status}`);
+      console.log(`Github reponded with: ${res.status}`);
     })
     .catch(error => {
       console.error(error);
     });
 
-  res.send("Notified Github: Pipeline Running");
+  res.send("Notified Github");
+  return data;
 };
