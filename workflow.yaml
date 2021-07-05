@@ -9,6 +9,8 @@ main:
       call: http.post
       args:
         url: https://australia-southeast1-cloud-pipeline-dev.cloudfunctions.net/notify-github
+        auth:
+          type: OIDC
         body:
           sha: ${sha}
           repo: "workflow-cicd-demo"
@@ -27,7 +29,7 @@ main:
           body:
             substitutions:
               commitSha: ${sha}
-              "_COMPARISON": "workflow.yaml"
+              _COMPARISON: "workflow.yaml"
           connector_params:
             timeout: 600 # Seconds
       except:
@@ -62,7 +64,7 @@ main:
           body:
             substitutions:
               commitSha: ${sha}
-              "_COMPARISON": "functions/notifyGithub"
+              _COMPARISON: "functions/notifyGithub"
           connector_params:
             timeout: 600 # Seconds
       except:
@@ -92,6 +94,8 @@ main:
       call: http.post
       args:
         url: https://australia-southeast1-cloud-pipeline-dev.cloudfunctions.net/notify-github
+        auth:
+          type: OIDC
         body:
           sha: ${sha}
           repo: "workflow-cicd-demo"
@@ -105,6 +109,8 @@ main:
       call: http.post
       args:
         url: https://australia-southeast1-cloud-pipeline-dev.cloudfunctions.net/notify-github
+        auth:
+          type: OIDC
         body:
           sha: ${sha}
           repo: "workflow-cicd-demo"
