@@ -17,47 +17,75 @@ main:
           context: "Workflow CD"
           description: "Pipeline running..."
           workflowId: ${sys.get_env("GOOGLE_CLOUD_WORKFLOW_EXECUTION_ID")}
-      next: ensureWorkflowCurrent
-  - ensureWorkflowCurrent:
+      next: workflowChanged
+  - workflowChanged:
       try:
         call: googleapis.cloudbuild.v1.projects.triggers.run
         args:
           projectId: ${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
-          triggerId: ensureWorkflowCurrent
+          triggerId: determineDifferences
           body:
-            commitSha: ${sha}
+            substitutions:
+              COMPARISON: "workflow.yaml"
           connector_params:
             timeout: 600 # Seconds
-        result: result
       except:
         as: error
-        assign:
-          - pipelineError: ${error}
-  - ensureWorkflowCurrentResult:
-      switch:
-        - condition: ${pipelineError != null} # Go to failure if unsuccessful
-          next: failGithub
-      next: deployCode
-  - deployCode:
+        steps: # If git diff determines there's a change, it exits with an error (non zero), so we then run these steps
+        - ensureWorkflowCurrent:
+            try:
+              call: googleapis.cloudbuild.v1.projects.triggers.run
+              args:
+                projectId: ${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
+                triggerId: ensureWorkflowCurrent
+                body:
+                  commitSha: ${sha}
+                connector_params:
+                  timeout: 600 # Seconds
+              result: result
+            except:
+              as: error
+              assign:
+                - pipelineError: ${error}
+        - ensureWorkflowCurrentResult:
+            switch:
+              - condition: ${pipelineError != null} # Go to failure if unsuccessful
+                next: failGithub
+            next: codeChanged
+  - codeChanged:
       try:
         call: googleapis.cloudbuild.v1.projects.triggers.run
         args:
           projectId: ${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
-          triggerId: deployCode
+          triggerId: determineDifferences
           body:
-            commitSha: ${sha}
+            substitutions:
+              COMPARISON: "functions/notifyGithub"
           connector_params:
             timeout: 600 # Seconds
-        result: result
       except:
         as: error
-        assign:
-          - pipelineError: ${error}
-  - deployCodeResult:
-      switch:
-        - condition: ${pipelineError != null} # Go to failure if unsuccessful
-          next: failGithub
-      next: succeedGithub
+        steps: # If git diff determines there's a change, it exits with an error (non zero), so we then run these steps
+          - deployCode:
+              try:
+                call: googleapis.cloudbuild.v1.projects.triggers.run
+                args:
+                  projectId: ${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
+                  triggerId: deployCode
+                  body:
+                    commitSha: ${sha}
+                  connector_params:
+                    timeout: 600 # Seconds
+                result: result
+              except:
+                as: error
+                assign:
+                  - pipelineError: ${error}
+          - deployCodeResult:
+              switch:
+                - condition: ${pipelineError != null} # Go to failure if unsuccessful
+                  next: failGithub
+              next: succeedGithub
   - succeedGithub:
       call: http.post
       args:

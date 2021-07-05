@@ -1,0 +1,7 @@
+steps:
+- name: 'gcr.io/cloud-builders/git'
+  entrypoint: "bash"
+  args:
+    - "-c"
+    - |
+      git diff --quiet HEAD~1 master $COMPARISON
