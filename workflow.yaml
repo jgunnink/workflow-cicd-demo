@@ -32,7 +32,7 @@ main:
       except:
         as: error
         assign:
-          - pipelineError: error
+          - pipelineError: ${error}
   - ensureWorkflowCurrentResult:
       switch:
         - condition: ${pipelineError != null} # Go to failure if unsuccessful
@@ -52,7 +52,7 @@ main:
       except:
         as: error
         assign:
-          - pipelineError: error
+          - pipelineError: ${error}
   - deployCodeResult:
       switch:
         - condition: ${pipelineError != null} # Go to failure if unsuccessful
@@ -81,6 +81,6 @@ main:
           owner: "jgunnink"
           state: "failure"
           context: "Workflow CD"
-          description: ${pipelineError.operation.error}
+          description: ${pipelineError}
           workflowId: ${sys.get_env("GOOGLE_CLOUD_WORKFLOW_EXECUTION_ID")}
       next: end
