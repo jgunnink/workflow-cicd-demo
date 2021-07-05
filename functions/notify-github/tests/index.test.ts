@@ -36,7 +36,7 @@ describe("when there's an error", () => {
     .reply(201);
   const failedResult = notifyGithub(failRequest, { send: () => null });
 
-  it("transforms the status to preprend with 'Failed -'", () => {
+  it("transforms the status to prepend with 'Failed -'", () => {
     expect(JSON.parse(failedResult).description).to.equal("Failed - original");
   });
   mock.restore();

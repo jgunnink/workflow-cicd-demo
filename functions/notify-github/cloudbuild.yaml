@@ -4,7 +4,7 @@ steps:
   args:
     - "-c"
     - |
-      npm install && npm run build
+      npm install && npm test && npm run build
   dir: 'functions/notify-github'
 
 - name: "gcr.io/cloud-builders/gcloud"
