@@ -1,10 +1,7 @@
 terraform {
-  #backend "gcs" {
-  #  # Bucket is passed in via cli arg. Eg, terraform initi -reconfigure -backend-configuration=dev.tfbackend
-  #}
-
-  required_version = "1.0.2"
-
+  backend "gcs" {
+    # Bucket is passed in via cli arg. Eg, terraform initi -reconfigure -backend-configuration=dev.tfbackend
+  }
 }
 
 provider "google" {
