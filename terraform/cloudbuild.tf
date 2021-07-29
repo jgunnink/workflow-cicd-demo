@@ -7,7 +7,7 @@ resource "google_cloudbuild_trigger" "kickoff-workflow" {
     name  = var.repo_name
 
     push {
-      branch       = "^master$"
+      branch = "^master$"
     }
   }
 

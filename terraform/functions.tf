@@ -6,15 +6,18 @@ resource "google_cloudfunctions_function" "notify-github" {
   ingress_settings  = "ALLOW_ALL"
 
   labels = {
-    deployment-tool = "cli-gcloud"
+    deployed-with = "terraform"
+    updated-with  = "cli-gcloud"
   }
 
   name                  = "notify-github"
   project               = var.project_id
   region                = var.region
   runtime               = "nodejs14"
-  # TODO: Change this to a custom service account.
-  service_account_email = "${var.project_id}@appspot.gserviceaccount.com"
+  service_account_email = google_service_account.notify_github_sa.email
   timeout               = 60
   trigger_http          = true
+
+  source_archive_bucket = "gcf-sources-924919904854-australia-southeast1"
+  source_archive_object = "notify-github-fd1bee74-f30c-4aea-9972-ba5116e6da38/version-1/function-source.zip"
 }
