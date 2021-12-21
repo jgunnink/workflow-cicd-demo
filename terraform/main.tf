@@ -1,6 +1,6 @@
 terraform {
   backend "gcs" {
-    # Bucket is passed in via cli arg. Eg, terraform initi -reconfigure -backend-configuration=dev.tfbackend
+    # Bucket is passed in via cli arg. Eg, terraform init -reconfigure -backend-configuration=dev.tfbackend
   }
 }
 
