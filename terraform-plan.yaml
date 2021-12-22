@@ -1,0 +1,8 @@
+steps:
+  - name: 'gcr.io/$PROJECT_ID/terraform'
+    args: ["init", "-reconfigure", "-backend-config=dev.tfbackend"]
+    dir: "./terraform"
+
+  - name: "gcr.io/$PROJECT_ID/terraform"
+    args: ["plan", "-var-file=dev.tfvars"]
+    dir: "./terraform"

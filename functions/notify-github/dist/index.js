@@ -8,6 +8,9 @@ var notifyGithub = function (req, res) {
     var repo = r.repo;
     var owner = r.owner || "jgunnink";
     var url = "https://api.github.com/repos/" + owner + "/" + repo + "/statuses/" + sha;
+    if (r.state === "failure") {
+        r.description = "Failed - " + r.description;
+    }
     var data = JSON.stringify({
         state: r.state,
         context: r.context,
@@ -26,10 +29,11 @@ var notifyGithub = function (req, res) {
     axios_1["default"]
         .post(url, data, config)
         .then(function (res) {
-        console.log("statusCode: " + res.status);
+        console.log("Github reponded with: " + res.status);
     })["catch"](function (error) {
         console.error(error);
     });
-    res.send("Notified Github: Pipeline Running");
+    res.send("Notified Github");
+    return data;
 };
 exports.notifyGithub = notifyGithub;
