@@ -1,9 +1,10 @@
 main:
   params: [input]
   steps:
-    - getSha:
+    - init:
         assign:
           - sha: ${input.sha}
+          - pipelineError: null
         next: pendingGithub
 
     - pendingGithub:
@@ -31,9 +32,14 @@ main:
               commitSha: ${sha}
               substitutions:
                 _COMPARISON: "workflow.yaml"
-          next: hasCodeChanged
         except:
-          next: updateWorkflow
+          steps:
+            - LogUpdateWorkflow:
+                call: sys.log
+                args:
+                  text: Workflow change detected. Updating workflow.
+                next: updateWorkflow
+        next: hasCodeChanged
 
     - updateWorkflow:
         try:
@@ -44,10 +50,14 @@ main:
             body:
               commitSha: ${sha}
         except:
-          as: error
-          assign:
-            - pipelineError: ${error}
-          next: failGithub
+          as: pipelineError
+          steps:
+            - LogFailedWorkflowUpdate:
+                call: sys.log
+                args:
+                  text: Update workflow failed. Failing to github.
+                next: failGithub
+        next: hasCodeChanged
 
     - hasCodeChanged:
         try:
@@ -59,9 +69,14 @@ main:
               commitSha: ${sha}
               substitutions:
                 _COMPARISON: "functions/notifyGithub"
-            next: succeedGithub
         except:
-          next: deployCode
+          steps:
+            - LogCodeChangeDetected:
+                call: sys.log
+                args:
+                  text: Code change detected, performing update.
+                next: deployCode
+        next: succeedGithub
 
     - deployCode:
         try:
@@ -71,12 +86,15 @@ main:
             triggerId: deployCode
             body:
               commitSha: ${sha}
-          next: succeedGithub
         except:
-          as: error
-          assign:
-            - pipelineError: ${error}
-          next: failGithub
+          as: pipelineError
+          steps:
+            - LogFailedCodeDeployment:
+                call: sys.log
+                args:
+                  text: Code deployment failed with error.
+                next: failGithub
+        next: succeedGithub
 
     - succeedGithub:
         call: http.post

@@ -2,6 +2,6 @@ steps:
   - name: gcr.io/cloud-builders/gcloud
     entrypoint: bash
     args:
-      - '-c'
+      - "-c"
       - |
-        gcloud workflows deploy workflow-1 --location=asia-southeast1 --source=workflow.yaml
+        gcloud workflows deploy workflow-1 --location=us-central1 --source=workflow.yaml
