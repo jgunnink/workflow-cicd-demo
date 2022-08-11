@@ -1,110 +1,110 @@
 main:
   params: [input]
   steps:
-  - getSha:
-      assign:
-        - sha: ${input.sha}
-      next: pendingGithub
-  - pendingGithub:
-      call: http.post
-      args:
-        url: https://australia-southeast1-cloud-pipeline-dev.cloudfunctions.net/notify-github
-        auth:
-          type: OIDC
-        body:
-          sha: ${sha}
-          repo: "workflow-cicd-demo"
-          owner: "jgunnink"
-          state: "pending"
-          context: "Workflow CD"
-          description: "Pipeline running..."
-          workflowId: ${sys.get_env("GOOGLE_CLOUD_WORKFLOW_EXECUTION_ID")}
-  - workflowChanged:
-      try:
-        call: googleapis.cloudbuild.v1.projects.triggers.run
+    - getSha:
+        assign:
+          - sha: ${input.sha}
+        next: pendingGithub
+
+    - pendingGithub:
+        call: http.post
         args:
-          projectId: ${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
-          triggerId: determineDifferences
+          url: https://australia-southeast1-cloud-pipeline-dev.cloudfunctions.net/notify-github
+          auth:
+            type: OIDC
           body:
-            commitSha: ${sha}
-            substitutions:
-              _COMPARISON: "workflow.yaml"
-      except:
-        as: error
-        steps: # If git diff determines there's a change, it exits with an error (non zero), so we then run these steps
-        - ensureWorkflowCurrent:
-            try:
-              call: googleapis.cloudbuild.v1.projects.triggers.run
-              args:
-                projectId: ${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
-                triggerId: ensureWorkflowCurrent
-                body:
-                  commitSha: ${sha}
-              result: result
-            except:
-              as: error
-              assign:
-                - pipelineError: ${error}
-        - ensureWorkflowCurrentResult:
-            switch:
-              - condition: ${pipelineError != null} # Go to failure if unsuccessful
-                next: failGithub
-  - codeChanged:
-      try:
-        call: googleapis.cloudbuild.v1.projects.triggers.run
+            sha: ${sha}
+            repo: "workflow-cicd-demo"
+            owner: "jgunnink"
+            state: "pending"
+            context: "Workflow CD"
+            description: "Pipeline running..."
+            workflowId: ${sys.get_env("GOOGLE_CLOUD_WORKFLOW_EXECUTION_ID")}
+
+    - hasWorkflowChanged:
+        try:
+          call: googleapis.cloudbuild.v1.projects.triggers.run
+          args:
+            projectId: ${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
+            triggerId: determineDifferences
+            body:
+              commitSha: ${sha}
+              substitutions:
+                _COMPARISON: "workflow.yaml"
+          next: hasCodeChanged
+        except:
+          next: updateWorkflow
+
+    - updateWorkflow:
+        try:
+          call: googleapis.cloudbuild.v1.projects.triggers.run
+          args:
+            projectId: ${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
+            triggerId: ensureWorkflowCurrent
+            body:
+              commitSha: ${sha}
+        except:
+          as: error
+          assign:
+            - pipelineError: ${error}
+          next: failGithub
+
+    - hasCodeChanged:
+        try:
+          call: googleapis.cloudbuild.v1.projects.triggers.run
+          args:
+            projectId: ${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
+            triggerId: determineDifferences
+            body:
+              commitSha: ${sha}
+              substitutions:
+                _COMPARISON: "functions/notifyGithub"
+            next: succeedGithub
+        except:
+          next: deployCode
+
+    - deployCode:
+        try:
+          call: googleapis.cloudbuild.v1.projects.triggers.run
+          args:
+            projectId: ${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
+            triggerId: deployCode
+            body:
+              commitSha: ${sha}
+          next: succeedGithub
+        except:
+          as: error
+          assign:
+            - pipelineError: ${error}
+          next: failGithub
+
+    - succeedGithub:
+        call: http.post
         args:
-          projectId: ${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
-          triggerId: determineDifferences
+          url: https://australia-southeast1-cloud-pipeline-dev.cloudfunctions.net/notify-github
+          auth:
+            type: OIDC
           body:
-            commitSha: ${sha}
-            substitutions:
-              _COMPARISON: "functions/notifyGithub"
-      except:
-        as: error
-        steps: # If git diff determines there's a change, it exits with an error (non zero), so we then run these steps
-          - deployCode:
-              try:
-                call: googleapis.cloudbuild.v1.projects.triggers.run
-                args:
-                  projectId: ${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
-                  triggerId: deployCode
-                  body:
-                    commitSha: ${sha}
-                result: result
-              except:
-                as: error
-                assign:
-                  - pipelineError: ${error}
-          - deployCodeResult:
-              switch:
-                - condition: ${pipelineError != null} # Go to failure if unsuccessful
-                  next: failGithub
-  - succeedGithub:
-      call: http.post
-      args:
-        url: https://australia-southeast1-cloud-pipeline-dev.cloudfunctions.net/notify-github
-        auth:
-          type: OIDC
-        body:
-          sha: ${sha}
-          repo: "workflow-cicd-demo"
-          owner: "jgunnink"
-          state: "success"
-          context: "Workflow CD"
-          description: "Pipeline successful"
-          workflowId: ${sys.get_env("GOOGLE_CLOUD_WORKFLOW_EXECUTION_ID")}
-      next: end
-  - failGithub:
-      call: http.post
-      args:
-        url: https://australia-southeast1-cloud-pipeline-dev.cloudfunctions.net/notify-github
-        auth:
-          type: OIDC
-        body:
-          sha: ${sha}
-          repo: "workflow-cicd-demo"
-          owner: "jgunnink"
-          state: "failure"
-          context: "Workflow CD"
-          description: ${pipelineError.operation.error.message}
-          workflowId: ${sys.get_env("GOOGLE_CLOUD_WORKFLOW_EXECUTION_ID")}
+            sha: ${sha}
+            repo: "workflow-cicd-demo"
+            owner: "jgunnink"
+            state: "success"
+            context: "Workflow CD"
+            description: "Pipeline successful"
+            workflowId: ${sys.get_env("GOOGLE_CLOUD_WORKFLOW_EXECUTION_ID")}
+        next: end
+
+    - failGithub:
+        call: http.post
+        args:
+          url: https://australia-southeast1-cloud-pipeline-dev.cloudfunctions.net/notify-github
+          auth:
+            type: OIDC
+          body:
+            sha: ${sha}
+            repo: "workflow-cicd-demo"
+            owner: "jgunnink"
+            state: "failure"
+            context: "Workflow CD"
+            description: ${pipelineError.operation.error.message}
+            workflowId: ${sys.get_env("GOOGLE_CLOUD_WORKFLOW_EXECUTION_ID")}
