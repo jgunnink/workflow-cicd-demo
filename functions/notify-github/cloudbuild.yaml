@@ -1,16 +1,18 @@
 steps:
-- name: node
-  entrypoint: "bash"
-  args:
-    - "-c"
-    - |
-      npm install && npm test && npm run build
-  dir: 'functions/notify-github'
+  - name: node
+    id: test and compile the function
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        npm install && npm test && npm run build
+    dir: "functions/notify-github"
 
-- name: "gcr.io/cloud-builders/gcloud"
-  entrypoint: "bash"
-  args:
-    - "-c"
-    - |
-      gcloud functions deploy notify-github --runtime nodejs14 --trigger-http --region australia-southeast1 --entry-point notifyGithub
-  dir: 'functions/notify-github'
+  - name: "gcr.io/cloud-builders/gcloud"
+    id: deploy the function
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        gcloud functions deploy notify-github --runtime nodejs14 --trigger-http --region australia-southeast1 --entry-point notifyGithub
+    dir: "functions/notify-github"
