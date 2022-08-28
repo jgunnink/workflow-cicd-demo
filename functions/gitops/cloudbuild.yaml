@@ -6,7 +6,7 @@ steps:
       - "-c"
       - |
         npm install && npm test && npm run build
-    dir: "functions/notify-github"
+    dir: "functions/gitops"
 
   - name: "gcr.io/cloud-builders/gcloud"
     id: deploy the function
@@ -14,5 +14,5 @@ steps:
     args:
       - "-c"
       - |
-        gcloud functions deploy notify-github --runtime nodejs14 --trigger-http --region australia-southeast1 --entry-point notifyGithub
-    dir: "functions/notify-github"
+        gcloud functions deploy ts-template --gen2 --runtime=nodejs16 --trigger-http --allow-unauthenticated --region australia-southeast1 --entry-point=gitops
+    dir: "functions/gitops"
