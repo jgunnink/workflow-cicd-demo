@@ -4,4 +4,4 @@ steps:
     args:
       - "-c"
       - |
-        gcloud workflows execute workflow-1 --location=us-central1 --data={\"sha\":\"$COMMIT_SHA\"}
+        gcloud workflows execute ci-cd-pipeline --location=us-central1 --data={\"sha\":\"$COMMIT_SHA\"}

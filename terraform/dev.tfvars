@@ -1,0 +1,5 @@
+region        = "us-central1"
+project_id    = "cloud-pipeline-dev"
+repo_name     = "workflow-cicd-demo"
+repo_owner    = "jgunnink"
+workflow_name = "ci-cd-pipeline"

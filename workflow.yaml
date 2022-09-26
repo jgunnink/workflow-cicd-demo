@@ -10,7 +10,7 @@ main:
     - pendingGithub:
         call: http.post
         args:
-          url: https://australia-southeast1-cloud-pipeline-dev.cloudfunctions.net/notify-github
+          url: https://us-central1-cloud-pipeline-dev.cloudfunctions.net/notify-github
           auth:
             type: OIDC
           body:
@@ -99,7 +99,7 @@ main:
     - succeedGithub:
         call: http.post
         args:
-          url: https://australia-southeast1-cloud-pipeline-dev.cloudfunctions.net/notify-github
+          url: https://us-central1-cloud-pipeline-dev.cloudfunctions.net/notify-github
           auth:
             type: OIDC
           body:
@@ -115,7 +115,7 @@ main:
     - failGithub:
         call: http.post
         args:
-          url: https://australia-southeast1-cloud-pipeline-dev.cloudfunctions.net/notify-github
+          url: https://us-central1-cloud-pipeline-dev.cloudfunctions.net/notify-github
           auth:
             type: OIDC
           body:

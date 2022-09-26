@@ -6,7 +6,7 @@
   "main": "dist/index.js",
   "scripts": {
     "start": "npx tsc-watch --onSuccess 'npx @google-cloud/functions-framework --target=notifyGithub'",
-    "deploy": "gcloud functions deploy notify-github --runtime nodejs14 --trigger-http --region australia-southeast1 --entry-point notifyGithub",
+    "deploy": "gcloud functions deploy notify-github --runtime nodejs16 --trigger-http --region us-central1 --entry-point notifyGithub",
     "build": "npx tsc",
     "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha -r ts-node/register 'tests/**/*.ts'"
   },
