@@ -4,4 +4,9 @@ steps:
     args:
       - "-c"
       - |
-        ./gitscript/script.sh
+        git checkout master && \
+        git pull origin master --unshallow && \
+        git checkout $COMMIT_SHA && \
+        (git diff --quiet HEAD~1 $COMMIT_SHA ${_COMPARISON}) && \
+        echo "No difference detected, skipping as there's nothing to deploy." || \
+        echo "File difference found. Failing build so workflow can deploy changes." && exit 1;
