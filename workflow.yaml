@@ -68,7 +68,7 @@ main:
             body:
               commitSha: ${sha}
               substitutions:
-                _COMPARISON: "functions/notifyGithub"
+                _COMPARISON: "functions/notify-github"
         except:
           steps:
             - LogCodeChangeDetected:
