@@ -22,7 +22,7 @@ main:
             description: "Pipeline running..."
             workflowId: ${sys.get_env("GOOGLE_CLOUD_WORKFLOW_EXECUTION_ID")}
 
-    - hasWorkflowChanged:
+    - hasInfrastructureChanged:
         try:
           call: googleapis.cloudbuild.v1.projects.triggers.run
           args:
@@ -31,7 +31,7 @@ main:
             body:
               commitSha: ${sha}
               substitutions:
-                _COMPARISON: "workflow.yaml"
+                _COMPARISON: "terraform"
         except:
           steps:
             - LogUpdateWorkflow:
