@@ -18,5 +18,5 @@ Currently, it has:
 
 ### On the todo list
 
-- Convert much of the infrastructure which has been defined via click ops to terraform.
-- Sort out a better way to report statuses back to github which don't involve a user's access token.
+[ ] Convert much of the infrastructure which has been defined via click ops to terraform.
+[ ] Sort out a better way to report statuses back to github which don't involve a user's access token.
