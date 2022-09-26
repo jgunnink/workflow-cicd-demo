@@ -15,7 +15,7 @@ resource "google_service_account" "workflow_runner_service_account" {
 
 resource "google_service_account" "notify_github_sa" {
   account_id   = "notify-github"
-  description  = "Controls the workflow for the cloud pipeline"
+  description  = "Notifies Github with status updates."
   display_name = "notify-github"
   project      = var.project_id
 }
@@ -33,6 +33,12 @@ resource "google_project_iam_member" "workflow_cloudfunction_invoker" {
   member  = "serviceAccount:${google_service_account.workflow_runner_service_account.email}"
   project = var.project_id
   role    = "roles/cloudfunctions.invoker"
+}
+
+resource "google_project_iam_member" "workflow_logger" {
+  member  = "serviceAccount:${google_service_account.workflow_runner_service_account.email}"
+  project = var.project_id
+  role    = "roles/logging.logWriter"
 }
 
 resource "google_project_iam_member" "notify_github_function_runner" {
