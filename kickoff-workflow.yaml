@@ -2,6 +2,6 @@ steps:
   - name: gcr.io/cloud-builders/gcloud
     entrypoint: bash
     args:
-      - '-c'
+      - "-c"
       - |
-        gcloud workflows execute workflow-1 --location=asia-southeast1 --data={\"sha\":\"$COMMIT_SHA\"}
+        gcloud workflows execute workflow-1 --location=us-central1 --data={\"sha\":\"$COMMIT_SHA\"}
