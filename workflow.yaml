@@ -27,7 +27,7 @@ main:
           call: googleapis.cloudbuild.v1.projects.triggers.run
           args:
             projectId: ${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
-            triggerId: determineDifferences
+            triggerId: determine-differences
             body:
               commitSha: ${sha}
               substitutions:
@@ -46,7 +46,7 @@ main:
           call: googleapis.cloudbuild.v1.projects.triggers.run
           args:
             projectId: ${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
-            triggerId: ensureWorkflowCurrent
+            triggerId: deploy-infrastructure
             body:
               commitSha: ${sha}
         except:
@@ -64,7 +64,7 @@ main:
           call: googleapis.cloudbuild.v1.projects.triggers.run
           args:
             projectId: ${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
-            triggerId: determineDifferences
+            triggerId: determine-differences
             body:
               commitSha: ${sha}
               substitutions:
