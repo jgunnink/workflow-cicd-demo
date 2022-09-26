@@ -4,5 +4,5 @@ steps:
     dir: "./terraform"
 
   - name: "gcr.io/$PROJECT_ID/terraform"
-    args: ["apply", "auto-approve", "-var-file=dev.tfvars"]
+    args: ["apply", "auto-approve", "--var-file=dev.tfvars"]
     dir: "./terraform"
