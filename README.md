@@ -13,8 +13,14 @@ Currently, it has:
 
 ### Some notes
 
-- Function targets nodejs 14.
+- Function targets nodejs 16.
 - Function needs a personal access token from github to report back the status, with authorisation.
+
+### Using terraform
+
+1. The current only manual step is that inside a GCP project you'll need to create a secret with secret manager called GITHUB_TOKEN in order
+   to update github statuses.
+1. The personal access token from github needs "repo:status" only.
 
 ### On the todo list
 

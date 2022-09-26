@@ -3,17 +3,28 @@ resource "google_cloudfunctions_function" "notify-github" {
   entry_point         = "notifyGithub"
 
   https_trigger_url = "https://${var.region}-${var.project_id}.cloudfunctions.net/notify-github"
-  ingress_settings  = "ALLOW_ALL"
+  ingress_settings  = "ALLOW_INTERNAL_ONLY"
 
   labels = {
     deployed-with = "terraform"
     updated-with  = "cli-gcloud"
   }
 
+  environment_variables = {
+    GCP_PROJECT   = var.project_id
+    WORKFLOW_NAME = var.workflow_name
+  }
+
+  secret_environment_variables {
+    key     = "GITHUB_TOKEN"
+    secret  = "GITHUB_TOKEN"
+    version = "1"
+  }
+
   name                  = "notify-github"
   project               = var.project_id
   region                = var.region
-  runtime               = "nodejs14"
+  runtime               = "nodejs16"
   service_account_email = google_service_account.notify_github_sa.email
   timeout               = 60
   trigger_http          = true

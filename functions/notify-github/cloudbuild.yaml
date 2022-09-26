@@ -14,5 +14,5 @@ steps:
     args:
       - "-c"
       - |
-        gcloud functions deploy notify-github --runtime nodejs14 --trigger-http --region australia-southeast1 --entry-point notifyGithub
+        gcloud functions deploy notify-github --runtime nodejs16 --trigger-http --region us-central1 --entry-point notifyGithub
     dir: "functions/notify-github"

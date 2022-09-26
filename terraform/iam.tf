@@ -38,7 +38,7 @@ resource "google_project_iam_member" "workflow_cloudfunction_invoker" {
 resource "google_project_iam_member" "notify_github_function_runner" {
   member  = "serviceAccount:${google_service_account.notify_github_sa.email}"
   project = var.project_id
-  role    = "roles/cloudfunctions.invoker"
+  role    = "roles/secretmanager.secretAccessor"
 }
 
 resource "google_project_iam_member" "cloudbuild_administer_cloudfunctions" {
