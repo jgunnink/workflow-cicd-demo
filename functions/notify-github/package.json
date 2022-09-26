@@ -2,7 +2,7 @@
   "name": "notify-github",
   "version": "1.0.0",
   "description": "A typescript function used to notify github of pipeline changes.",
-  "repository": "jgunnink/notify-github",
+  "repository": "jgunnink/workflow-cicd-demo/functions/notify-github",
   "main": "dist/index.js",
   "scripts": {
     "start": "npx tsc-watch --onSuccess 'npx @google-cloud/functions-framework --target=notifyGithub'",

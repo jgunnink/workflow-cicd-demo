@@ -13,6 +13,7 @@ resource "google_cloudfunctions_function" "notify-github" {
   environment_variables = {
     GCP_PROJECT   = var.project_id
     WORKFLOW_NAME = var.workflow_name
+    REGION        = var.region
   }
 
   secret_environment_variables {

@@ -27,7 +27,7 @@ export const notifyGithub = (req: R, res: any) => {
     state: r.state,
     context: r.context,
     description: r.description,
-    target_url: `https://console.cloud.google.com/workflows/workflow/us-central1/${process.env.WORKFLOW_NAME}/execution/${r.workflowId}?project=${process.env.GCP_PROJECT}`,
+    target_url: `https://console.cloud.google.com/workflows/workflow/${process.env.REGION}/${process.env.WORKFLOW_NAME}/execution/${r.workflowId}?project=${process.env.GCP_PROJECT}`,
   });
 
   const config = {
@@ -42,8 +42,8 @@ export const notifyGithub = (req: R, res: any) => {
 
   axios
     .post(url, data, config)
-    .then(res => {
-      console.log(`Github reponded with: ${res.status}`);
+    .then(_ => {
+      console.log("Successfully posted status to GitHub: ", r.state);
     })
     .catch(error => {
       console.error(error);

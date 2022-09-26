@@ -30,9 +30,7 @@ const successRequest: R = {
 describe("when there's an error", () => {
   const mock = new MockAdapter(axios);
   mock
-    .onPost(
-      `https://api.github.com/repos/${failRequest.body.owner}/${failRequest.body.repo}/statuses/${failRequest.body.sha}`,
-    )
+    .onPost(`https://api.github.com/repos/${failRequest.body.owner}/${failRequest.body.repo}/statuses/${failRequest.body.sha}`)
     .reply(201);
   const failedResult = notifyGithub(failRequest, { send: () => null });
 
@@ -45,14 +43,17 @@ describe("when there's an error", () => {
 describe("when there no error", () => {
   const mock = new MockAdapter(axios);
   mock
-    .onPost(
-      `https://api.github.com/repos/${successRequest.body.owner}/${successRequest.body.repo}/statuses/${successRequest.body.sha}`,
-    )
+    .onPost(`https://api.github.com/repos/${successRequest.body.owner}/${successRequest.body.repo}/statuses/${successRequest.body.sha}`)
     .reply(201);
   const successResult = notifyGithub(successRequest, { send: () => null });
 
   it("doesn't transform the status", () => {
     expect(JSON.parse(successResult).description).to.equal("original");
   });
+
+  it("calls the github api with a url that includes the workflow id", () => {
+    expect(mock.history.post[0].data).to.include(successRequest.body.workflowId);
+  });
+
   mock.restore();
 });
